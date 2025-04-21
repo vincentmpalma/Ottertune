@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Information</title>
+    <style>
+        .albumSide
+        {
+            display: flex;
+        flex-wrap: wrap;  
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+}
+        
+        .albumRows
+        {
+            text-align: center;
+            width: 150px;
+
+        }
+        .imageAlbum 
+        {
+            text-align: center;
+            width: 250px;
+
+        }
+
+        .titleNames
+        {
+            justify-content: left;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: large;
+            
+            
+
+        }
+
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('index') }}">Search</a>
+    <br>
+   <h1>{{track.name}}</h1>                                   
+   <img src="{{ track.album.images[0].url }}" width="300" /> 
+   
+   <h2>{{track.artists[0].name}} </h2>
+ <img src="{{ artist_image }}" width="300" alt="Artist Image">
+ <hr>
+   <h3>Artists Albums: </h3>
+   <div class = "albumSide">
+   {% for album in artist_albums %}
+  
+   <div class = "albumsRows">
+   
+    <p class = "titleNames"> {{ album.name }}</p>
+     <img src="{{ album.images[0].url }}" class = "imageAlbum">
+    </div>
+
+ {% endfor %}
+</div>
+
+
+
+
+
+
+    
+</body>
+</html>
