@@ -13,8 +13,21 @@
       <label>
         Search for a song:
         <input type="text" name="track" required />
+        <input type="hidden" name="userId" value="{{ userID }}">
       </label>
       <button>Search</button>
     </form>
+
+    <a href="{{ url_for('checkLikes', userId=userID) }}">View My Liked Songs</a>
+    <!-- it's not showing up yet. i gotta figure out after signing in with the user
+    {% if searchHistory %}
+    <ul>
+      {% for row in searchHistory %}
+      <li>{{ row[0] }}</li> 
+    {% endfor %}
+    </ul>
+
+  {% endif %} -->
+
   </body>
 </html>

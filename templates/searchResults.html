@@ -19,6 +19,18 @@
         >Listen on Spotify</a>
       <a href = "{{ url_for('song_info', track_id=track.id) }}" target = "_blank"> Get Info</a>
      
+      <form action ="{{url_for ('likedSongs') }}" method = "POST">
+        <input type ="hidden" name = "userId" value = "{{userId}}">
+        <input type ="hidden" name = "songID" value = "{{track.id}}">
+        <input type ="hidden" name = "songURL" value = "{{track.external_urls.spotify}}">
+        <!-- the song that the user searched -->
+        <input type="hidden" name="trackQuery" value="{{ track_name }}"> 
+        <button type="submit" id = "likeButton">❤️</button>
+        {% if request.args.get('liked') == track.id %}
+        <p>{{ request.args.get('message') }}</p>
+      {% endif %}
+
+      </form>
 
     </div>
 
