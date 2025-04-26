@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bootstrap import Bootstrap5
+from flask_session import Session
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from dotenv import load_dotenv
@@ -27,7 +28,9 @@ client_credentials_manager)
 app = Flask(__name__) 
 boostrap = Bootstrap5(app)
 
-
+app.config["SESSION_PERMANENT"] = False 
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 # liking the song
 cur.execute("""CREATE TABLE IF NOT EXISTS likedSongs(
@@ -36,6 +39,37 @@ cur.execute("""CREATE TABLE IF NOT EXISTS likedSongs(
             songID INTEGER,
             songURL TEXT,
             FOREIGN KEY (userId) REFERENCES user(userId)
+            )""")
+
+
+cur.execute("""CREATE TABLE IF NOT EXISTS playlist (
+            playlistId INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            userId INTEGER,
+            FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
+            )""")
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS song (
+    songId TEXT PRIMARY KEY,
+    artistId TEXT,
+    albumId TEXT,
+    image TEXT,
+    artist TEXT,
+    album TEXT,
+    link TEXT,
+    score INTEGER,
+    explicit INTEGER,
+    duration INTEGER
+)
+""")
+
+cur.execute("""CREATE TABLE IF NOT EXISTS playlistSongs (
+            playlistId INTEGER,
+            songId INTEGER,
+            PRIMARY KEY (playlistId, songId),
+            FOREIGN KEY (playlistId) REFERENCES playlist(playlistId) ON DELETE CASCADE,
+            FOREIGN KEY (songId) REFERENCES song(songId) ON DELETE CASCADE
             )""")
 con.commit() 
 
@@ -63,11 +97,54 @@ def index():
     #     cur.execute("SELECT songSearched FROM searchHistory WHERE userId = ? LIMIT 10", (userID))
     #     searchHistory = cur.fetchall()
 
-    return  render_template('index.html')
+    print("in /")
+    print(session["userId"])
+    print(session["username"])
+    if session["userId"] is not None and session["username"] is not None:
+        return render_template('index.html')
+
+    return  render_template('landing.html')
     #add it to render later searchHistory = searchHistory, userID = userID
+
+@app.route('/profile')
+def profile():
+
+    return  render_template('profile.html')
+
 
 @app.route('/signIn', methods=['GET', 'POST'])
 def signIn():
+
+    if session["userId"] is not None and session["username"] is not None:
+        return render_template('index.html')
+    
+    username = request.form.get('username')
+    password = request.form.get('password')
+    
+    if not username or not password:
+        return redirect("/")
+
+
+    username = request.form['username']
+    password = request.form['password']
+
+    print("username passed in: ", username)
+    res = cur.execute("SELECT * FROM user WHERE username = ?", (username,))
+    userData = res.fetchone()
+    print(userData)
+
+    if userData is None or userData[2] != password:
+        print(" is none or password is wrong")
+        # return render_template('landing.html')
+        return redirect('/')
+    
+    session["userId"] = userData[0]
+    session["username"] = userData[1]
+    
+    print(userData[0])
+    print(session["userId"])
+    print(session["username"])
+
     return  render_template('index.html')
 
 @app.route('/signUp', methods=['GET', 'POST'])
@@ -87,6 +164,12 @@ def signUp():
         print(row)
 
     return  render_template('index.html')
+
+@app.route("/logout")
+def logout():
+    session["userId"] = None
+    session["username"] = None
+    return redirect("/")
 
 @app.route('/searchResults')
 def searchResults():
