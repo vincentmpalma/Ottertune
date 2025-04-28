@@ -33,14 +33,16 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # liking the song
+cur.execute("""DROP TABLE IF EXISTS likedSongs""") # delete this 
 cur.execute("""CREATE TABLE IF NOT EXISTS likedSongs(
             likeID INTEGER PRIMARY KEY AUTOINCREMENT,
             userId INTEGER,
-            songID INTEGER,
+            songID TEXT,
             songURL TEXT,
+            imageURL TEXT,
+            songName TEXT,
             FOREIGN KEY (userId) REFERENCES user(userId)
             )""")
-
 
 cur.execute("""CREATE TABLE IF NOT EXISTS playlist (
             playlistId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,9 +101,9 @@ def index():
     #     searchHistory = cur.fetchall()
 
     print("in /")
-    print(session["userId"])
-    print(session["username"])
-    if session["userId"] is not None and session["username"] is not None:
+    print(session.get("userId"))
+    print(session.get("username"))
+    if session.get("userId") is not None and session.get("username") is not None:
         return render_template('index.html')
 
     return  render_template('landing.html')
@@ -109,7 +111,7 @@ def index():
 
 @app.route('/profile')
 def profile():
-    if session["userId"] is None or session["username"] is None:
+    if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
 
     return  render_template('profile.html')
@@ -118,7 +120,10 @@ def profile():
 @app.route('/signIn', methods=['GET', 'POST'])
 def signIn():
 
-    if session["userId"] is not None and session["username"] is not None:
+    print("session userId: ",  session.get("userId"))
+    print("session username: ",  session.get("username"))
+
+    if session.get("userId") is not None and session.get("username") is not None:
         return render_template('index.html')
     
     username = request.form.get('username')
@@ -145,8 +150,8 @@ def signIn():
     session["username"] = userData[1]
     
     print(userData[0])
-    print(session["userId"])
-    print(session["username"])
+    print(session.get("userId"))
+    print(session.get("username"))
 
     return  render_template('index.html')
 
@@ -166,22 +171,23 @@ def signUp():
     userData = res.fetchone()
     print(userData)
 
-    session["userId"] = userData[0]
-    session["username"] = userData[1]
+    session.get["userId"] = userData[0]
+    session.get["username"] = userData[1]
 
     return  redirect('/')
 
 @app.route("/logout")
 def logout():
     session["userId"] = None
-    session["username"] = None
+    session.get["username"] = None
     return redirect("/")
 
 @app.route('/searchResults')
 def searchResults():
-    if session["userId"] is None or session["username"] is None:
+    if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
     track = request.args.get('track')
+
 
     # will use later for the search history
     # userID = request.args.get('userId')
@@ -192,6 +198,7 @@ def searchResults():
 
     results = sp.search(q=track, type='track', limit=5)
     results = results['tracks']['items']
+    print(results)
     return render_template('searchResults.html', results=results, track_name=track)
 
 
@@ -209,9 +216,10 @@ def song_info(track_id):
 
 @app.route('/likedSongs', methods =['POST'])
 def likedSongs():
-    userID = request.form['userId']
+    userID = session.get("userId")
     songID = request.form['songID']
     songURL = request.form['songURL']
+    imageURL = request.form['imageURL']
     print(f"userID: {userID}")
     print(f"songID: {songID}")
     print(f"songURL: {songURL}")
@@ -222,7 +230,7 @@ def likedSongs():
     already_liked = cur.fetchone()
 
     if not already_liked:
-        cur.execute("INSERT INTO likedSongs (userId, songID, songURL) VALUES (?,?,?)", (userID, songID, songURL))
+        cur.execute("INSERT INTO likedSongs (userId, songID, songURL, imageURL) VALUES (?,?,?,?)", (userID, songID, songURL, imageURL))
         con.commit()
 
     #searched song
@@ -233,11 +241,19 @@ def likedSongs():
 #i need to figure out the user thing. Because right now im just liking the song but im not signed in yet
 @app.route('/checkLikes')
 def checkLikes():
-    userID = request.args.get('userId')
+
+
+    userID = session.get("userId")
     likedSongs = []
 
+    test = cur.execute("SELECT * FROM likedSongs WHERE userId = ?", (userID,))
+    test = cur.fetchall()
+    print("checkLiked data: ", test)
+
+    print("userId in checkLikes: ", userID)
+
     if userID:
-        cur.execute("SELECT songID, songURL FROM likedSongs WHERE userId = ?", (userID))
+        cur.execute("SELECT songID, songURL, imageURL FROM likedSongs WHERE userId = ?", (userID,))
         likedSongs = cur.fetchall()
 
     return render_template('likedSongs.html', likedSongs =likedSongs, userID = userID)
@@ -245,11 +261,11 @@ def checkLikes():
 
 @app.route('/playlists')
 def playlists():
-    if session["userId"] is None or session["username"] is None:
+    if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
     
 
-    userId = session["userId"]
+    userId = session.get("userId")
     
     cur.execute("SELECT * FROM playlist WHERE userId = ?", (userId,))
     playlists = cur.fetchall()
@@ -259,12 +275,12 @@ def playlists():
 
 @app.route('/createPlaylist', methods =['POST'])
 def createPlaylist():
-    if session["userId"] is None or session["username"] is None:
+    if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
     print("in create playlist route")
     name = request.form.get('name')
     desc = request.form.get('desc')
-    userId = session["userId"]
+    userId = session.get("userId")
 
     data = [(userId, name, desc)]
     cur.executemany("INSERT INTO playlist (userId, name, desc) VALUES(?, ?, ?)", data)
