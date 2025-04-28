@@ -46,6 +46,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS playlist (
             playlistId INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             userId INTEGER,
+            desc TEXT,
             FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
             )""")
 
@@ -108,6 +109,8 @@ def index():
 
 @app.route('/profile')
 def profile():
+    if session["userId"] is None or session["username"] is None:
+        return redirect('/')
 
     return  render_template('profile.html')
 
@@ -159,11 +162,14 @@ def signUp():
     cur.executemany("INSERT INTO user (username, password) VALUES(?, ?)", data)
     con.commit()
 
-    print("all users in db:")
-    for row in cur.execute("SELECT * FROM user"):
-        print(row)
+    res = cur.execute("SELECT * FROM user WHERE username = ?", (username,))
+    userData = res.fetchone()
+    print(userData)
 
-    return  render_template('index.html')
+    session["userId"] = userData[0]
+    session["username"] = userData[1]
+
+    return  redirect('/')
 
 @app.route("/logout")
 def logout():
@@ -173,6 +179,8 @@ def logout():
 
 @app.route('/searchResults')
 def searchResults():
+    if session["userId"] is None or session["username"] is None:
+        return redirect('/')
     track = request.args.get('track')
 
     # will use later for the search history
@@ -233,3 +241,36 @@ def checkLikes():
         likedSongs = cur.fetchall()
 
     return render_template('likedSongs.html', likedSongs =likedSongs, userID = userID)
+
+
+@app.route('/playlists')
+def playlists():
+    if session["userId"] is None or session["username"] is None:
+        return redirect('/')
+    
+
+    userId = session["userId"]
+    
+    cur.execute("SELECT * FROM playlist WHERE userId = ?", (userId,))
+    playlists = cur.fetchall()
+    print(playlists)
+    
+    return render_template("playlists.html", playlists=playlists)
+
+@app.route('/createPlaylist', methods =['POST'])
+def createPlaylist():
+    if session["userId"] is None or session["username"] is None:
+        return redirect('/')
+    print("in create playlist route")
+    name = request.form.get('name')
+    desc = request.form.get('desc')
+    userId = session["userId"]
+
+    data = [(userId, name, desc)]
+    cur.executemany("INSERT INTO playlist (userId, name, desc) VALUES(?, ?, ?)", data)
+    con.commit()
+
+
+    print(name)
+    print(desc)
+    return redirect("/playlists")
