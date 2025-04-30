@@ -14,6 +14,8 @@
         Search for a song:
         <input type="text" name="track" required />
         <!-- <input type="hidden" name="userId" value="{{ userID }}"> -->
+
+        
       </label>
       <button>Search</button>
     </form>
@@ -29,5 +31,15 @@
     </ul>
 
   {% endif %} -->
+
+  <h3>Search History:</h3>
+    {% if search_history %}
+      <ul>
+        {% for entry in search_history %}
+          <li>{{ entry[0] }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+  
   </body>
 </html>
