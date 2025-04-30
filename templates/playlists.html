@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ottertune</title>
+    {{ bootstrap.load_css() }}
+  </head>
+  <body>
+    <h1>Ottertune</h1>
+
+    <h1>Playlists</h1>
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#createPlaylistModal"
+    >
+      Create a Playlist
+    </button>
+
+    <br />
+    <br />
+
+    <h2>My Playlists</h2>
+
+    {% for item in playlists %}{{ item[1] }} <br />
+
+    {% endfor %}
+
+    <div
+      class="modal fade"
+      id="createPlaylistModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Create a Playlist</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form id="submitForm" method="POST" action="/createPlaylist">
+            <div class="modal-body">
+              <p>Enter your playlist name</p>
+              <input
+                type="text"
+                id="myInput"
+                name="name"
+                class="form-control"
+                placeholder="Playlist Name"
+                required
+              />
+              <br />
+              <p>Enter your playlist description</p>
+              <textarea
+                id="myDesc"
+                name="desc"
+                placeholder="Playlist Description"
+                class="form-control"
+              ></textarea>
+
+              <br />
+              <hr />
+              <div class="text-center">
+                <button class="btn btn-primary" id="saveChangesBtn">
+                  Create
+                </button>
+              </div>
+            </div>
+          </form>
+          <!-- <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const myModalEl = document.getElementById("createPlaylistModal");
+      const myModal = new bootstrap.Modal(myModalEl);
+      const myInput = document.getElementById("myInput");
+
+      myModalEl.addEventListener("shown.bs.modal", () => {
+        myInput.focus();
+      });
+
+      // document
+      //   .querySelector("#submitForm")
+      //   .addEventListener("submit", submitNewPlaylist);
+
+      async function submitNewPlaylist(event) {
+        // const playlistName = myInput.value;
+        console.log("Saving playlist...");
+
+        // TODO: Send to Flask server with fetch()
+        // Example:
+        /*
+    fetch('/create-playlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: playlistName })
+    }).then(response => {
+      if (response.ok) {
+        alert('Playlist created!');
+        myModal.hide();
+      } else {
+        alert('Failed to create playlist.');
+      }
+    });
+    */
+
+        myModal.hide(); // Close the modal manually after saving
+      }
+    </script>
+  </body>
+</html>

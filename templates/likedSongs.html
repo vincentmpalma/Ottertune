@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Liked Songs</title>
+</head>
+<body>
+    <h1>Liked Songs</h1>
+
+    {% if likedSongs %}
+        <ul>
+            {% for songID, songURL, imageURL in likedSongs %}
+                <li>
+                    <a href="{{ songURL }}" target="_blank">{{ songID }}</a>
+                    <!-- <strong>{{ track.name }}</strong> by {{ artists[0].name }}</p> FOR THE NAME LATER, ILL DO IT ON THE INDEX.PY TOO -->
+                    <img src="{{ imageURL }}" width="250" />
+                </li>
+
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('index', userId=userID) }}">Back to Home</a>
+</body>
+</html>

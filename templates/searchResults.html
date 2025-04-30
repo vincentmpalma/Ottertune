@@ -12,6 +12,11 @@
 
     {% for track in results %}
 
+    first_artist = track['artists'][0]['name']
+    print(first_artist)
+
+
+
     <div>
       <img src="{{ track.album.images[0].url }}" width="250" />
       <p><strong>{{ track.name }}</strong> by {{ track.artists[0].name }}</p>
@@ -19,6 +24,20 @@
         >Listen on Spotify</a>
       <a href = "{{ url_for('song_info', track_id=track.id) }}" target = "_blank"> Get Info</a>
      
+      <form action ="{{url_for ('likedSongs') }}" method = "POST">
+        <input type ="hidden" name = "userId" value = "{{userId}}">
+        <input type ="hidden" name ="imageURL" value =  "{{ track.album.images[0].url }}">
+        <input type ="hidden" name = "songID" value = "{{track.id}}">
+        <input type ="hidden" name = "songURL" value = "{{track.external_urls.spotify}}">
+
+        <!-- the song that the user searched -->
+        <input type="hidden" name="trackQuery" value="{{ track_name }}"> 
+        <button type="submit" id = "likeButton">❤️</button>
+        {% if request.args.get('liked') == track.id %}
+        <p>{{ request.args.get('message') }}</p>
+      {% endif %}
+
+      </form>
 
     </div>
 
