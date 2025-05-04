@@ -215,7 +215,7 @@ def searchResults():
     # cur.execute("SELECT songSearched FROM searchHistory WHERE userId = ? ORDER BY searchID DESC LIMIT 5", (userID,))
     # search_history = cur.fetchall()   
 
-    results = sp.search(q=track, type='track', limit=5)
+    results = sp.search(q=track, type='track', limit=6)
     results = results['tracks']['items']
     # print(results)
     return render_template('searchResults.html', results=results, track_name=track)
