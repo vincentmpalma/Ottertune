@@ -77,13 +77,13 @@ cur.execute("""CREATE TABLE IF NOT EXISTS playlistSongs (
 con.commit() 
 
 #search history later
-# cur.execute("""CREATE TABLE IF NOT EXISTS searchHistory(
-#           searchID INTEGER PRIMARY KEY AUTOINCREMENT,
-#           userId INTEGER,
-#           songSearched TEXT,
-#           FOREIGN KEY (userId) REFERENCES user(userId)
-#           )""")
-# con.commit()
+cur.execute("""CREATE TABLE IF NOT EXISTS searchHistory(
+          searchID INTEGER PRIMARY KEY AUTOINCREMENT,
+          userId INTEGER,
+          songSearched TEXT,
+          FOREIGN KEY (userId) REFERENCES user(userId)
+          )""")
+con.commit()
 
 
                 
@@ -93,18 +93,32 @@ con.commit()
 def index():
 
     # will use later for search history
-    # userID = request.args.get('userId')
+    # userID = request.args.get('userId') #add the session thing
     # searchHistory = []
-
+   
     # if userID:
     #     cur.execute("SELECT songSearched FROM searchHistory WHERE userId = ? LIMIT 10", (userID))
     #     searchHistory = cur.fetchall()
+
+
+    # will use later for the search history
+    userID = session.get("userId") 
+    track = request.args.get('track')
+    
+    #add to search history
+    # if track and userID: 
+    #     cur.execute("INSERT INTO searchHistory (userId, songSearched) VALUES (?,?)", (userID, track))
+    #     con.commit()
+
+
+    cur.execute("SELECT songSearched FROM searchHistory WHERE userId = ? ORDER BY searchID DESC LIMIT 10", (userID,))
+    search_history = cur.fetchall()   
 
     print("in /")
     print(session.get("userId"))
     print(session.get("username"))
     if session.get("userId") is not None and session.get("username") is not None:
-        return render_template('index.html')
+        return render_template('index.html', track_name=track, search_history = search_history)
 
     return  render_template('landing.html')
     #add it to render later searchHistory = searchHistory, userID = userID
@@ -171,15 +185,15 @@ def signUp():
     userData = res.fetchone()
     print(userData)
 
-    session.get["userId"] = userData[0]
-    session.get["username"] = userData[1]
+    session["userId"] = userData[0]
+    session["username"] = userData[1]
 
     return  redirect('/')
 
 @app.route("/logout")
 def logout():
     session["userId"] = None
-    session.get["username"] = None
+    session["username"] = None
     return redirect("/")
 
 @app.route('/searchResults')
@@ -189,16 +203,21 @@ def searchResults():
     track = request.args.get('track')
 
 
-    # will use later for the search history
-    # userID = request.args.get('userId')
+    # # will use later for the search history
+    userID = session.get("userId") 
     
-    # if track and userID: #WORK IN PROGRESS
-    #     cur.execute("INSERT INTO searchHistory (userId, songSearched) VALUES (?,?)", (userID, track))
-    #     con.commit()
+    # #add to search history
+    if track and userID: 
+        cur.execute("INSERT INTO searchHistory (userId, songSearched) VALUES (?,?)", (userID, track))
+        con.commit()
 
-    results = sp.search(q=track, type='track', limit=5)
+
+    # cur.execute("SELECT songSearched FROM searchHistory WHERE userId = ? ORDER BY searchID DESC LIMIT 5", (userID,))
+    # search_history = cur.fetchall()   
+
+    results = sp.search(q=track, type='track', limit=6)
     results = results['tracks']['items']
-    print(results)
+    # print(results)
     return render_template('searchResults.html', results=results, track_name=track)
 
 
@@ -214,28 +233,30 @@ def song_info(track_id):
     
     return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists)
 
-@app.route('/likedSongs', methods =['POST'])
+@app.route('/likedSongs', methods=['POST'])
 def likedSongs():
     userID = session.get("userId")
     songID = request.form['songID']
     songURL = request.form['songURL']
     imageURL = request.form['imageURL']
+    songName = request.form['songName']
     print(f"userID: {userID}")
     print(f"songID: {songID}")
     print(f"songURL: {songURL}")
-   
-
-    # for database purposes so there's no duplicates
+    
+    # no duplicates
     cur.execute("SELECT * FROM likedSongs WHERE userId = ? AND songID = ? AND songURL = ?", (userID, songID, songURL))
     already_liked = cur.fetchone()
 
     if not already_liked:
-        cur.execute("INSERT INTO likedSongs (userId, songID, songURL, imageURL) VALUES (?,?,?,?)", (userID, songID, songURL, imageURL))
+       
+        cur.execute("INSERT INTO likedSongs (userId, songID, songURL, imageURL, songName) VALUES (?,?,?,?,?)", (userID, songID, songURL, imageURL, songName))
         con.commit()
 
-    #searched song
+
     track_query = request.form['trackQuery']
     return redirect(url_for('searchResults', track=track_query, userId=userID, liked=songID, message="Added to Liked Songs"))
+
 
 
 #i need to figure out the user thing. Because right now im just liking the song but im not signed in yet
@@ -244,6 +265,7 @@ def checkLikes():
 
 
     userID = session.get("userId")
+    track = request.args.get('track')
     likedSongs = []
 
     test = cur.execute("SELECT * FROM likedSongs WHERE userId = ?", (userID,))
@@ -253,8 +275,11 @@ def checkLikes():
     print("userId in checkLikes: ", userID)
 
     if userID:
-        cur.execute("SELECT songID, songURL, imageURL FROM likedSongs WHERE userId = ?", (userID,))
+        cur.execute("SELECT songID, songURL, imageURL, songName FROM likedSongs WHERE userId = ?", (userID,))
         likedSongs = cur.fetchall()
+        
+        print("Liked songs: ", likedSongs)
+
 
     return render_template('likedSongs.html', likedSongs =likedSongs, userID = userID)
 
