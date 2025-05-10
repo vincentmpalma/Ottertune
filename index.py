@@ -70,9 +70,11 @@ CREATE TABLE IF NOT EXISTS song (
 cur.execute("""CREATE TABLE IF NOT EXISTS playlistSongs (
             playlistId INTEGER,
             songId INTEGER,
-            PRIMARY KEY (playlistId, songId),
+            userId INTEGER,
+            PRIMARY KEY (playlistId, songId, userId),
             FOREIGN KEY (playlistId) REFERENCES playlist(playlistId) ON DELETE CASCADE,
             FOREIGN KEY (songId) REFERENCES song(songId) ON DELETE CASCADE
+            FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
             )""")
 con.commit() 
 
@@ -218,7 +220,12 @@ def searchResults():
     results = sp.search(q=track, type='track', limit=6)
     results = results['tracks']['items']
     # print(results)
-    return render_template('searchResults.html', results=results, track_name=track)
+
+
+    playlists = cur.execute("SELECT * FROM playlist WHERE userId = ?", (userID,))
+    playlists = cur.fetchall()
+    print("checkLiked data: ", playlists)
+    return render_template('searchResults.html', results=results, track_name=track, playlists=playlists)
 
 
 
@@ -314,4 +321,26 @@ def createPlaylist():
 
     print(name)
     print(desc)
+    return redirect("/playlists")
+
+@app.route('/addSongToPlaylist', methods =['POST'])
+def addSongToPlaylist():
+    if session.get("userId") is None or session.get("username") is None:
+        return redirect('/')
+    
+
+    print("in addSongToPlaylist route")
+    playlistId = request.form.get('playlistId')
+    songId = request.form.get('songId')
+    userId = session.get("userId")
+
+    print("playlistId: ", playlistId)
+    print("songId: ", songId)
+    print("userId: ", userId)
+
+    data = [(playlistId, songId, userId)]
+    cur.executemany("INSERT INTO playlistSongs (playlistId, songId, userId) VALUES(?, ?, ?)", data)
+    con.commit()
+
+
     return redirect("/playlists")
