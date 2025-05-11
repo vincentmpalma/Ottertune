@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ottertune</title>
+    {{ bootstrap.load_css() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  </head>
+  <body>
+    <h1>Ottertune</h1>
+    {% include '/partials/nav.html' %}
+    <h2 class="track-title">Results: {{ track }}</h2>
+
+
+    <!-- Search History (optional) -->
+    <!--
+    <h3>Search History:</h3>
+    {% if search_history %}
+      <ul>
+        {% for entry in search_history %}
+          <li>{{ entry[0] }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    -->
+
+    <div class="container">
+      <div class="row">
+        {% for track in results %}
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <img src="{{ track.album.images[0].url }}" class="card-img-top" alt="Album art of {{ track.name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ track.name }}</h5>
+                <p class="card-text">by {{ track.artists[0].name }}</p>
+                <a href="{{ track.external_urls.spotify }}" class="btn btn-success btn-sm mb-2" target="_blank">🎧 Listen</a>
+                <a href="{{ url_for('song_info', track_id=track.id) }}" class="btn btn-info btn-sm mb-2" target="_blank">ℹ️ Info</a>
+                
+                <form action="{{ url_for('likedSongs') }}" method="post">
+                  <input type="hidden" name="songID" value="{{ track['id'] }}">
+                  <input type="hidden" name="songURL" value="{{ track['external_urls']['spotify'] }}">
+                  <input type="hidden" name="imageURL" value="{{ track['album']['images'][0]['url'] }}">
+                  <input type="hidden" name="songName" value="{{ track['name'] }}">
+                  <input type="hidden" name="trackQuery" value="{{ track_name }}">
+                  <button type="submit" class="btn btn-like btn-sm mb-2">❤️ Like</button>
+                </form>
+    
+                {% if request.args.get('liked') == track.id %}
+                  <div class="mt-2 alert alert-success">{{ request.args.get('message') }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <a class = "back" href="/">Back</a>
+  </body>
+</html>

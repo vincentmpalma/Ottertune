@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Liked Songs</title>
+    {{ bootstrap.load_css() }}
+  </head>
+<body>
+    <h1>Liked Songs</h1>
+    {% include '/partials/nav.html' %}
+    {% if likedSongs %}
+        <ul>
+            {% for songID, songURL, imageURL, songName in likedSongs %}
+                <li>
+                    <a href="{{ songURL }}" target="_blank">{{ songName }}</a><br>
+
+
+                    <img src="{{ imageURL }}" width="250" />
+                </li>
+
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('index', userId=userID) }}">Back to Home</a>
+</body>
+</html>

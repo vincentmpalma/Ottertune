@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{ bootstrap.load_css() }}
+    <title>Random Playlist</title>
+</head>
+<body>
+    <h1>Random Playlist</h1>
+    <!-- navigation bar -->
+    {% include '/partials/nav.html' %}
+
+    <!-- questions for random playlist -->
+    <form action="/random_playlist_results">
+        <!-- asks user for an emotion -->
+        <select name="mood" class="form-select m-2" aria-label="Default select example">
+            <option value="" selected>How are you feeling?</option>
+            <option value="joy">Happy</option>
+            <option value="love">Content</option>
+            <option value="fear">Scared</option>
+            <option value="amazing">Surprised</option>
+            <option value="grief">Sad</option>
+            <option value="loathe">Bored</option>
+            <option value="rage">Angry</option>
+            <option value="optimism">Curious</option>
+        </select>
+        <!-- asks user for location for language -->
+        <select name="travel" class="form-select m-2" aria-label="Default select example">
+            <option value="" selected>Where would you like to travel?</option>
+            <option value="mandarin">China</option>
+            <option value="spanish">Spain</option>
+            <option value="portuguese">Portugal</option>
+            <option value="russian">Russia</option>
+            <option value="japanese">Japan</option>
+            <option value="vietnamese">Vietnam</option>
+            <option value="turkish">Turkey</option>
+            <option value="egyptian">Egypt</option>
+            <option value="korean">South Korea</option>
+            <option value="german">Germany</option>
+            <option value="indonesian">Indonesia</option>
+            <option value="french">France</option>
+            <option value="italian">Italy</option>
+        </select>
+        <!-- asks user for hobby for genre -->
+        <select name="hobby" class="form-select m-2" aria-label="Default select example">
+            <option value="" selected>What's your favorite hobby?</option>
+            <option value="classical">Painting</option>
+            <option value="blues">Reading</option>
+            <option value="country">Fishing</option>
+            <option value="electronic">Gaming</option>
+            <option value="folk">Gardening</option>
+            <option value="hip hop">Dancing</option>
+            <option value="jazz">Traveling</option>
+            <option value="pop">Cooking</option>
+            <option value="soul">Meditation</option>
+            <option value="rock">Camping</option>
+            <option value="metal">Exercising</option>
+            <option value="punk">Sports</option>
+        </select>
+        <!-- submits the form -->
+        <button type="submit" class="btn btn-primary">Show Playlist</button>
+    </form>
+</body>
+</html>
