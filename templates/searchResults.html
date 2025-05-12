@@ -14,17 +14,6 @@
     <h2 class="track-title">Results: {{ track }}</h2>
 
 
-    <!-- Search History (optional) -->
-    <!--
-    <h3>Search History:</h3>
-    {% if search_history %}
-      <ul>
-        {% for entry in search_history %}
-          <li>{{ entry[0] }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-    -->
 
     <div class="container">
       <div class="row">
@@ -46,6 +35,7 @@
                   <input type="hidden" name="trackQuery" value="{{ track_name }}">
                   <button type="submit" class="btn btn-like btn-sm mb-2">❤️ Like</button>
                 </form>
+                
     
                 {% if request.args.get('liked') == track.id %}
                   <div class="mt-2 alert alert-success">{{ request.args.get('message') }}</div>

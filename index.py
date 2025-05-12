@@ -200,24 +200,20 @@ def logout():
 def searchResults():
     if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
-    track = request.args.get('track')
-
-
-    # # will use later for the search history
-    userID = session.get("userId") 
     
-    # #add to search history
-    if track and userID: 
-        cur.execute("INSERT INTO searchHistory (userId, songSearched) VALUES (?,?)", (userID, track))
+    track = request.args.get('track')
+    userID = session.get("userId")
+
+
+    cur.execute("SELECT songSearched FROM searchHistory WHERE userId = ? ORDER BY searchID DESC LIMIT 1", (userID,))
+    last_search = cur.fetchone()
+
+    if track and userID and (last_search is None or last_search[0].lower() != track.lower()):
+        cur.execute("INSERT INTO searchHistory (userId, songSearched) VALUES (?, ?)", (userID, track))
         con.commit()
-
-
-    # cur.execute("SELECT songSearched FROM searchHistory WHERE userId = ? ORDER BY searchID DESC LIMIT 5", (userID,))
-    # search_history = cur.fetchall()   
 
     results = sp.search(q=track, type='track', limit=6)
     results = results['tracks']['items']
-    # print(results)
     return render_template('searchResults.html', results=results, track_name=track)
 
 

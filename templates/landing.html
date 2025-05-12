@@ -1,41 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ottertune</title>
-    {{ bootstrap.load_css() }}
-  </head>
-  <body>
-    <h1>Ottertune</h1>
-    <br />
-    <br />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ottertune</title>
+  {{ bootstrap.load_css() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='firstPage.css') }}">
+</head>
+<body>
+  <img src="/static/ottertune.png" class="logo" />
+
+  <div class="card">
     <h2>Sign In</h2>
     <form action="/signIn" method="POST">
-      <label>
-        Username:
-        <input type="text" name="username" required />
-        <br />
-        Password:
-        <input type="password" name="password" required />
-      </label>
-      <br />
-      <button>Sign In</button>
+      <div class="input-distance">
+        <input type="text" name="username" required placeholder="Username"  />
+        
+      </div>
+      <div class="input-distance">
+        <input type="password" name="password" required placeholder="Password"  />
+  
+      </div>
+      <button type="submit">Sign In</button>
     </form>
-    <br />
-    <br />
+  </div>
 
+  <div class="card">
     <h2>Sign Up</h2>
     <form action="/signUp" method="POST">
-      <label>
-        Username:
-        <input type="text" name="username" required />
-        <br />
-        Password:
-        <input type="password" name="password" required />
-      </label>
-      <br />
-      <button>Sign Up</button>
+      <div class="input-distance">
+        <input type="text" name="username" required placeholder="Username" />
+       
+      </div>
+      <div class="input-distance">
+        <input type="password" name="password" required placeholder="Password" />
+      
+      </div>
+      <button type="submit">Sign Up</button>
     </form>
-  </body>
-</html>
+  </div>
+</body>

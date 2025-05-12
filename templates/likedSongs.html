@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>My Liked Songs</title>
+  <meta charset="UTF-8">
+  <title>My Liked Songs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {{ bootstrap.load_css() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Liked Songs</h1>
 
-    {% if likedSongs %}
-        <ul>
-            {% for songID, songURL, imageURL, songName in likedSongs %}
-                <li>
-                    <a href="{{ songURL }}" target="_blank">{{ songName }}</a><br>
+  <h1>Ottertune</h1>
+  <h2 class="track-title">Your Liked Songs</h2>
 
+  <div class="container">
+    <div class="row">
+      {% if likedSongs %}
+        {% for songID, songURL, imageURL, songName in likedSongs %}
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <img src="{{ imageURL }}" class="card-img-top" alt="Album art for {{ songName }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ songName }}</h5>
+                <a href="{{ songURL }}" class="btn btn-success btn-sm mb-2" target="_blank">🎧 Listen</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="track-title">You haven't liked any songs yet.</p>
+      {% endif %}
+    </div>
+  </div>
 
-                    <img src="{{ imageURL }}" width="250" />
-                </li>
-
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <br>
-    <a href="{{ url_for('index', userId=userID) }}">Back to Home</a>
+  <a class="back" href="{{ url_for('index', userId=userID) }}">Back to Home</a>
 </body>
 </html>
