@@ -229,9 +229,14 @@ def song_info(track_id):
     artist_info = sp.artist(artist_id)
     artistAlbums = sp.artist_albums(artist_id, album_type='album',limit=20)
     imageArtists = artist_info['images'][0]['url']
+    topTracks = sp.artist_top_tracks(artist_id, country='US')
+    
+
+   
+    
 
     
-    return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists)
+    return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists, tracks = topTracks['tracks'])
 
 @app.route('/likedSongs', methods=['POST'])
 def likedSongs():

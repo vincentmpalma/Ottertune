@@ -5,27 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Song Information</title>
     <style>
-        .albumSide
-        {
-            display: flex;
-        flex-wrap: wrap;  
-        gap: 10px;
-        justify-content: center;
-        margin-top: 20px;
-}
+      
+      #bodyStyling
+      {
+        background-color: lightgray;
+        color:white;
+      }
+   
+
+    #stylingCarousel
+    {
+      background-color:antiquewhite;
+   padding:30px;
+      color: black;
+      
+    }
+    #stylingTop
+    {
+      background-color:#0d2c40;
+      color: white;
+      padding: 25px;
+      border: black;
+    }
+    #stylingAlbums 
+    {
+      background-color:#0d2c40;
+      color: white;
+      padding-top: 25px;
+      padding-bottom: 25px;
+      border: black;
+      margin-top: -27px;
+
+    }
+      #artistTrack
+      {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      #aristTitle{
+        text-align: center;
+      }
+      img {
+        border-radius: 15px;
+      }
+    
+    .img-fluid
+    {
+    
+      width: 300px;
+    }
         
-        .albumRows
-        {
-            text-align: center;
-            width: 150px;
-
-        }
-        .imageAlbum 
-        {
-            text-align: center;
-            width: 250px;
-
-        }
+     
 
         .titleNames
         {
@@ -38,31 +67,82 @@
         }
 
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
-<body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<body id = "bodyStyling">
+  <div id = "stylingTop">
     <a href="{{ url_for('index') }}">Search</a>
     <br>
-   <h1>{{track.name}}</h1>                                   
-   <img src="{{ track.album.images[0].url }}" width="300" /> 
-   
-   <h2>{{track.artists[0].name}} </h2>
- <img src="{{ artist_image }}" width="300" alt="Artist Image">
- <hr>
-   <h3>Artists Albums: </h3>
-   <div class = "albumSide">
-   {% for album in artist_albums %}
-  
-   <div class = "albumsRows">
-   
-    <p class = "titleNames"> {{ album.name }}</p>
-     <img src="{{ album.images[0].url }}" class = "imageAlbum">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 text-center">
+          <h2>{{track.name}}</h2>   
+          <img src="{{ track.album.images[0].url }}" class="img-fluid" alt="Album Image">
+        </div>
+        <div class="col-md-6 text-center">
+          <h2>{{track.artists[0].name}} </h2>
+          <img src="{{ artist_image }}" class="img-fluid" alt="Artist Image">
+        </div>
+      </div>
     </div>
+    <br>
+    <br>
+  </div>
+    <div id = "stylingCarousel">
+ 
+   <h3 id = "aristTitle">Artists Albums: </h3>
 
- {% endfor %}
+   <div class="container px-0" style="max-width: 650px;">
+    <div id="artistCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        {% for album in artist_albums %}
+          <div class="carousel-item {% if loop.index0 == 0 %}active{% endif %}">
+            <img src="{{ album.images[0].url }}" class="d-block w-100 imageAlbum" alt="{{ album.name }}">
+            <div class="carousel-caption d-none d-md-block">
+              <h5 id="artistTrack">{{ album.name }}</h5>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+  
+      <!-- Controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#artistCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#artistCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+
+<br>
 </div>
 
 
+<div id = "stylingAlbums">
 
+<h2>Artists Top Tracks</h2>
+
+  <div class="container my-4">
+    <div class="row">
+      {% for track in tracks %}
+      
+        <div class="col-md-3 col-sm-4 col-6 text-center mb-4">
+          <img src="{{ track.album.images[0].url }}" class="img-fluid" alt="{{ track.name }}">
+          <p> {{ track.name }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+ 
+
+ 
 
 
 
