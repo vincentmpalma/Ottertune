@@ -5,7 +5,7 @@ body {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 50px;
   color: #1b2a41;
   margin-bottom: 2rem;
 }
@@ -16,7 +16,6 @@ form {
   padding: 1rem;
   border-radius: 10px;
 }
-
 label {
   font-weight: bold;
   display: block;
