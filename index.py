@@ -9,7 +9,7 @@ import sqlite3
 
 load_dotenv()
 
-con = sqlite3.connect("Ottertune.db", check_same_thread=False)
+con = sqlite3.connect("ottertune.db", check_same_thread=False)
 cur = con.cursor()
 cur.execute("""DROP TABLE IF EXISTS ottertune""")
 cur.execute("""CREATE TABLE IF NOT EXISTS user(
