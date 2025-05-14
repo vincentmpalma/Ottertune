@@ -1,0 +1,50 @@
+body {
+    background-color: #fdf4ec;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #0f2a47;
+    padding: 32px;
+  }
+  
+  h1, h2 {
+    font-weight: 700;
+    color: #0f2a47;
+  }
+  
+  .btn-primary {
+    background-color: #0f2a47;
+    border-color: #0f2a47;
+  }
+  
+  .btn-primary:hover {
+    background-color: #143b63;
+    border-color: #143b63;
+  }
+  
+  .modal-content {
+    background-color: #0f2a47;
+    color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .form-control {
+    background-color: #1c3a5c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+  }
+  
+  .form-control::placeholder {
+    color: #cfd8e3;
+  }
+  
+  .modal-header h5 {
+    font-weight: bold;
+  }
+  
+  .text-center button {
+    border-radius: 32px;
+    padding: 8px 32px;
+    font-weight: bold;
+  }
+  

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ottertune</title>
     {{ bootstrap.load_css() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='playlistPage.css') }}">
   </head>
   <body>
     <h1>Ottertune</h1>
@@ -24,10 +25,11 @@
 
     <h2>My Playlists</h2>
 
+    <div id = playlistName">
     {% for item in playlists %}{{ item[1] }} <br />
 
     {% endfor %}
-
+  </div>
     <div
       class="modal fade"
       id="createPlaylistModal"
