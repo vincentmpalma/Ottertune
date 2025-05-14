@@ -1,2 +1,0 @@
-ALTER TABLE playlist
-ADD COLUMN desc TEXT;
