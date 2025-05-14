@@ -1,2 +1,2 @@
-ALTER TABLE playlist
-ADD COLUMN desc TEXT;
+
+SELECT * FROM playlistSongs;
