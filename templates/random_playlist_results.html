@@ -13,30 +13,28 @@
   <body>
     <h1>Random Playlist</h1>
     {% include '/partials/nav.html' %}
-    <!-- display random playlist -->
+
     <div class="container">
       <div class="row">
         {% for track in results %}
         <div class="col-md-6 mb-4">
           <div class="card shadow-sm h-100">
-            <!-- image of song -->
             <img
               src="{{ track.album.images[0].url }}"
               class="card-img-top"
               alt="Album art of {{ track.name }}"
             />
             <div class="card-body">
-              <!-- song info -->
               <h5 class="card-title">{{ track.name }}</h5>
               <p class="card-text">by {{ track.artists[0].name }}</p>
-              <!-- listen to song -->
+
               <a
                 href="{{ track.external_urls.spotify }}"
                 class="btn btn-success btn-sm mb-2"
                 target="_blank"
                 >🎧 Listen</a
               >
-              <!-- link for more detailed view of song -->
+
               <a
                 href="{{ url_for('song_info', track_id=track.id) }}"
                 class="btn btn-info btn-sm mb-2"
@@ -44,7 +42,6 @@
                 >ℹ️ Info</a
               >
 
-              <!-- hidden info of song -->
               <form action="{{ url_for('likedSongs') }}" method="post">
                 <input type="hidden" name="songID" value="{{ track['id'] }}" />
                 <input
@@ -73,7 +70,7 @@
               </form>
 
               {% if request.args.get('liked') == track.id %}
-              <!-- add to liked songs -->
+
               <div class="mt-2 alert alert-success">
                 {{ request.args.get('message') }}
               </div>
@@ -85,10 +82,8 @@
       </div>
     </div>
 
-    <!-- form for saving playlist -->
     <form action="/save_random_playlist" method="POST">
       <div class="input-group mb-3">
-        <!-- text input for name of playlist -->
         <span class="input-group-text" id="inputGroup-sizing-default"
           >Name of playlist</span
         >
@@ -101,7 +96,6 @@
         />
       </div>
       <div class="input-group mb-3">
-        <!-- text input for description of playlist -->
         <span class="input-group-text" id="inputGroup-sizing-default"
           >Playlist description</span
         >
@@ -113,7 +107,7 @@
           aria-describedby="inputGroup-sizing-default"
         />
       </div>
-      <!-- all the song's IDs -->
+
       <input type="hidden" name="song0" value="{{ results[0]['id'] }}" />
       <input
         type="hidden"
@@ -222,7 +216,6 @@
         value="{{ results[5]['artists'][0]['name'] }}"
       />
 
-      <!-- submit form -->
       <button type="submit" class="btn btn-primary">Save Playlist</button>
     </form>
   </body>

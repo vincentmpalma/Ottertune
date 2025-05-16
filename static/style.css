@@ -1,124 +1,112 @@
 body {
-    background-color: #fdf6ec;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #1c1c1c;
-    padding-bottom: 40px;
-  }
+  background-color: #fdf6ec;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1c1c1c;
+  padding-bottom: 40px;
+}
 
+h1 {
+  font-size: 2.5rem;
+  margin-top: 10px;
+  margin-left: 20px;
+}
 
+.container {
+  padding: 30px;
+}
 
-  h1 {
-    font-size: 2.5rem;
-    margin-top: 10px;
-    margin-left: 20px;
-  }
+.card {
+  background-color: #0d2c40;
+  border: none;
+  border-radius: 15px;
+  transition: transform 0.2s;
+  text-align: center;
+  width: auto;
+  padding: 15px;
+  margin: 10px auto;
+}
 
-  .container {
-    padding: 30px;
-  }
+.card-body {
+  padding: 10px;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
 
-  .card {
-    background-color: #0d2c40;
-    border: none;
-    border-radius: 15px;
-    transition: transform 0.2s;
-    text-align: center;
-    width: auto;
-    padding: 15px;
-    margin: 10px auto;
-  }
+.btn-success,
+.btn-info {
+  background-color: #0d2c40;
+  border: none;
+  color: white;
+}
 
-  .card-body {
-    padding: 10px; 
-  }
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  }
+.btn-success:hover {
+  background-color: green;
+  color: white;
+}
 
+.btn-like:hover {
+  background-color: red;
+  color: white;
+}
 
-  .btn-success, .btn-info {
-    background-color: #0d2c40;
-    border: none;
-    color: white;
-  }
+.btn-info:hover {
+  background-color: lightblue;
+  color: white;
+}
 
-  .btn-success:hover
-  {
-    background-color:green;
-    color:white;
-  }
+.btn-like {
+  color: white;
+  background-color: transparent;
+}
 
-  .btn-like:hover
-  {
-    background-color:red;
-    color:white;
-  }
+a {
+  color: #0d2c40;
+  font-weight: bold;
+}
 
-  .btn-info:hover
-  {
-    background-color:lightblue;
-    color:white;
-  }
+.alert-success {
+  background-color: #dcf8e8;
+  color: #1c1c1c;
+}
 
+.card-img-top {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 150px;
+  height: auto;
+}
 
+.card-text {
+  color: white;
+}
 
-  .btn-like {
-    color: white;
-    background-color: transparent; 
-  }
-    
+.card-title {
+  color: white;
+}
 
-  a {
-    color: #0d2c40;
-    font-weight: bold;
-  }
+.back {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #0d2c40;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  color: #0d2c40;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+  margin-left: 20px;
+}
 
-  .alert-success {
-    background-color: #dcf8e8;
-    color: #1c1c1c;
-  }
+.back:hover {
+  background-color: #0d2c40;
+  color: #fff;
+  transform: scale(1.05);
+}
 
-  .card-img-top {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 150px;
-    height: auto;
-  }
-  
-  .card-text
-  {
-    color: white;
-  }
-
-  .card-title
-  {
-    color: white;
-  }
-
-
-  .back {
-    display: inline-block;
-    padding: 10px 20px;
-    border: 2px solid #0d2c40;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    color: #0d2c40;
-    font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s, color 0.3s, transform 0.2s;
-    margin-left: 20px;
-  }
-  
-  .back:hover {
-    background-color: #0d2c40;
-    color: #fff;
-    transform: scale(1.05);
-  }
-  
-  .track-title
-  {
-    margin-left: 25px;
-  }
+.track-title {
+  margin-left: 25px;
+}

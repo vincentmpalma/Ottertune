@@ -239,9 +239,8 @@ def song_info(track_id):
     artist_info = sp.artist(artist_id)
     artistAlbums = sp.artist_albums(artist_id, album_type='album',limit=20)
     imageArtists = artist_info['images'][0]['url']
-
-    
-    return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists)
+    topTracks = sp.artist_top_tracks(artist_id, country='US')
+    return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists, tracks = topTracks['tracks'])
 
 @app.route('/likedSongs', methods=['POST'])
 def likedSongs():
@@ -301,11 +300,11 @@ def playlists():
 
     userId = session.get("userId")
 
-    # Get all playlists by this user
+
     cur.execute("SELECT * FROM playlist WHERE userId = ?", (userId,))
     playlists = cur.fetchall()
 
-    # Create a dict to hold songs for each playlist
+    
     playlist_data = []
 
     for playlist in playlists:
@@ -313,7 +312,7 @@ def playlists():
         playlist_name = playlist[1]
         playlist_desc = playlist[3]
 
-        # Get all songs linked to this playlist
+       
         cur.execute("""
             SELECT songId, songName, artistName, imageURL, songURL
             FROM playlistSongs
@@ -351,40 +350,40 @@ def createPlaylist():
 
 @app.route('/random_playlist')
 def random_playlist():
-    # checks if user is logged in
+   
     if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
     
-    # renders the random playlist page
+   
     return render_template('random_playlist.html')
 
 @app.route('/random_playlist_results')
 def random_playlist_results():
-    # checks if user is logged in
+  
     if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
 
-    # random word for search
+   
     random_word = ['nifty', 'addicted', 'entire', 'heavenly', 'didactic',
         'exotic', 'ablaze', 'cultural', 'receptive', 'complete',
         'kindly', 'eatable', 'early', 'fuzzy', 'violet',
         'glorious', 'barbarous', 'chivalrous', 'sharp', 'right']
-    # is randomized before selected
+   
     random.shuffle(random_word)
 
-    # user's responses for random playlist
+
     mood = request.args.get('mood')
     travel = request.args.get('travel')
     hobby = request.args.get('hobby')
 
-    # combined for search
+  
     search_term = f'{travel} {hobby} {mood} {random_word[0]}'
 
-    # search using spotify api
+    
     results = sp.search(q=search_term, type='track', limit=6)
     results = results['tracks']['items']
 
-    # renders the results of questionnaire
+
     return render_template('random_playlist_results.html', results=results, track_name=search_term)
 
 @app.route('/save_random_playlist', methods=['POST'])
@@ -398,15 +397,15 @@ def save_random_playlist():
 
     print("name of playlist is :", name )
 
-    # Insert new playlist
+
     cur.execute("INSERT INTO playlist (userId, name, desc) VALUES (?, ?, ?)", (userId, name, desc))
     con.commit()
 
-    # Get the newly created playlist ID
+
     cur.execute("SELECT last_insert_rowid()")
     playlistId = cur.fetchone()[0]
 
-    # Add each song to the playlist and print info
+    
     for i in range(6):
             song_id = request.form.get(f'song{i}')
             song_name = request.form.get(f'songName{i}')
@@ -421,7 +420,7 @@ def save_random_playlist():
             print(f"  Image URL: {image_url}")
             print(f"  Spotify URL: {song_url}")
 
-            if song_id:  # only insert if song exists
+            if song_id:  
                 cur.execute("""
                     INSERT INTO playlistSongs (playlistId, songId, songName, artistName, imageURL, songURL)
                     VALUES (?, ?, ?, ?, ?, ?)
