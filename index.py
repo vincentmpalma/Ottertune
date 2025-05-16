@@ -68,6 +68,8 @@ CREATE TABLE IF NOT EXISTS song (
 )
 """)
 
+# test
+
 cur.execute("""CREATE TABLE IF NOT EXISTS playlistSongs (
             playlistId INTEGER,
             songId TEXT,
