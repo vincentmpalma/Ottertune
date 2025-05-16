@@ -5,41 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ottertune</title>
     {{ bootstrap.load_css() }}
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='indexPage.css') }}"
+    />
   </head>
   <body>
-    <h1>Ottertune</h1>
-    {% include '/partials/nav.html' %}
-    <form action="/searchResults">
+    <div class="flex">
+      <img src="/static/ottertune.png" class="logo" width="100px" />
+      <h1>Ottertune</h1>
+    </div>
+    <div id="nav">{% include '/partials/nav.html' %}</div>
+    <form action="/searchResults" method="get">
       <label>
         Search for a song:
         <input type="text" name="track" required />
-        <!-- <input type="hidden" name="userId" value="{{ userID }}"> -->
-
-        
+        <input type="hidden" name="from" value="search" />
       </label>
       <button>Search</button>
     </form>
 
     <a href="{{ url_for('checkLikes', userId=userID) }}">View My Liked Songs</a>
     <a href="{{ url_for('playlists') }}">View My Playlists</a>
-    <!-- it's not showing up yet. i gotta figure out after signing in with the user
-    {% if searchHistory %}
-    <ul>
-      {% for row in searchHistory %}
-      <li>{{ row[0] }}</li> 
-    {% endfor %}
-    </ul>
 
-  {% endif %} -->
-
-  <h3>Search History:</h3>
+    <h3>Search History:</h3>
     {% if search_history %}
-      <ul>
-        {% for entry in search_history %}
-          <li>{{ entry[0] }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-  
+    <ul>
+      {% for entry in search_history %}
+      <li>{{ entry[0] }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <a href="/logout" class="back">Log out</a>
   </body>
 </html>

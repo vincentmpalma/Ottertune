@@ -5,7 +5,7 @@
       "previewLimit": 100,
       "driver": "SQLite",
       "name": "ottertune",
-      "database": "${workspaceFolder:ottertune}/ottertune.db"
+      "database": "${workspaceFolder:Ottertune}/ottertune.db"
     }
   ]
 }

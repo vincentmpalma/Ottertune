@@ -68,9 +68,15 @@ CREATE TABLE IF NOT EXISTS song (
 )
 """)
 
+# test
+
 cur.execute("""CREATE TABLE IF NOT EXISTS playlistSongs (
             playlistId INTEGER,
             songId TEXT,
+            songName TEXT,
+            artistName TEXT,
+            imageURL TEXT,
+            songURL TEXT,
             PRIMARY KEY (playlistId, songId),
             FOREIGN KEY (playlistId) REFERENCES playlist(playlistId) ON DELETE CASCADE
             )""")
@@ -219,7 +225,12 @@ def searchResults():
     results = sp.search(q=track, type='track', limit=6)
     results = results['tracks']['items']
     # print(results)
-    return render_template('searchResults.html', results=results, track_name=track)
+
+
+    userPlaylists = cur.execute("SELECT * FROM playlist WHERE userId = ?", (userID,))
+    playlists = userPlaylists.fetchall()
+    print("playlists for this user : ", playlists)
+    return render_template('searchResults.html', results=results, track_name=track, playlists=playlists)
 
 
 
@@ -230,9 +241,8 @@ def song_info(track_id):
     artist_info = sp.artist(artist_id)
     artistAlbums = sp.artist_albums(artist_id, album_type='album',limit=20)
     imageArtists = artist_info['images'][0]['url']
-
-    
-    return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists)
+    topTracks = sp.artist_top_tracks(artist_id, country='US')
+    return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists, tracks = topTracks['tracks'])
 
 @app.route('/likedSongs', methods=['POST'])
 def likedSongs():
@@ -289,15 +299,38 @@ def checkLikes():
 def playlists():
     if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
-    
 
     userId = session.get("userId")
-    
+
+
     cur.execute("SELECT * FROM playlist WHERE userId = ?", (userId,))
     playlists = cur.fetchall()
-    print(playlists)
+
     
-    return render_template("playlists.html", playlists=playlists)
+    playlist_data = []
+
+    for playlist in playlists:
+        playlist_id = playlist[0]
+        playlist_name = playlist[1]
+        playlist_desc = playlist[3]
+
+       
+        cur.execute("""
+            SELECT songId, songName, artistName, imageURL, songURL
+            FROM playlistSongs
+            WHERE playlistId = ?
+        """, (playlist_id,))
+        songs = cur.fetchall()
+
+        playlist_data.append({
+            "id": playlist_id,
+            "name": playlist_name,
+            "desc": playlist_desc,
+            "songs": songs
+        })
+
+    return render_template("playlists.html", playlist_data=playlist_data)
+
 
 @app.route('/createPlaylist', methods =['POST'])
 def createPlaylist():
@@ -319,91 +352,119 @@ def createPlaylist():
 
 @app.route('/random_playlist')
 def random_playlist():
-    # checks if user is logged in
+   
     if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
     
-    # renders the random playlist page
+   
     return render_template('random_playlist.html')
 
 @app.route('/random_playlist_results')
 def random_playlist_results():
-    # checks if user is logged in
+  
     if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
 
-    # random word for search
+   
     random_word = ['nifty', 'addicted', 'entire', 'heavenly', 'didactic',
         'exotic', 'ablaze', 'cultural', 'receptive', 'complete',
         'kindly', 'eatable', 'early', 'fuzzy', 'violet',
         'glorious', 'barbarous', 'chivalrous', 'sharp', 'right']
-    # is randomized before selected
+   
     random.shuffle(random_word)
 
-    # user's responses for random playlist
+
     mood = request.args.get('mood')
     travel = request.args.get('travel')
     hobby = request.args.get('hobby')
 
-    # combined for search
+  
     search_term = f'{travel} {hobby} {mood} {random_word[0]}'
 
-    # search using spotify api
+    
     results = sp.search(q=search_term, type='track', limit=6)
     results = results['tracks']['items']
 
-    # renders the results of questionnaire
+
     return render_template('random_playlist_results.html', results=results, track_name=search_term)
 
-@app.route('/save_random_playlist')
+@app.route('/save_random_playlist', methods=['POST'])
 def save_random_playlist():
-    # checks if user is logged in
     if session.get("userId") is None or session.get("username") is None:
         return redirect('/')
-    
-    # gets songs from random playlist
-    songs = []
-    song1 = request.args.get('song1')
-    songs.append(song1)
-    song2 = request.args.get('song2')
-    songs.append(song2)
-    song3 = request.args.get('song3')
-    songs.append(song3)
-    song4 = request.args.get('song4')
-    songs.append(song4)
-    song5 = request.args.get('song5')
-    songs.append(song5)
-    song6 = request.args.get('song6')
-    songs.append(song6)
 
-    # user inputted name and description for playlist
-    name = request.args.get('playlist_name')
-    desc = request.args.get('playlist_desc')
     userId = session.get("userId")
+    name = request.form.get('playlist_name')
+    desc = request.form.get('playlist_desc')
 
-    # protection against sql injection
-    data = [(userId, name, desc)]
-    # save new playlist into database
-    cur.executemany("INSERT INTO playlist (userId, name, desc) VALUES(?, ?, ?)", data)
+    print("name of playlist is :", name )
+
+
+    cur.execute("INSERT INTO playlist (userId, name, desc) VALUES (?, ?, ?)", (userId, name, desc))
     con.commit()
 
-    # get's the ID of the recently created playlist
-    cur.execute("SELECT playlistId FROM playlist WHERE userId = ? AND name = ? AND desc = ?", (userId, name, desc))
-    playlistId = cur.fetchall()
 
-    # converts tuple to string
-    playlistId = str(playlistId[0])
-    # removes "(" and ",)" from string
-    playlistId = playlistId.replace("(", "")
-    playlistId = playlistId.replace(",)", "")
-    # converts string to int
-    playlistId = int(playlistId)
+    cur.execute("SELECT last_insert_rowid()")
+    playlistId = cur.fetchone()[0]
 
-    # loops all the songs into the recently created playlist
-    for song in songs:
-        data = [(playlistId, song)]
-        cur.executemany("INSERT INTO playlistSongs (playlistId, songId) VALUES(?, ?)", data)
+    
+    for i in range(6):
+            song_id = request.form.get(f'song{i}')
+            song_name = request.form.get(f'songName{i}')
+            artist_name = request.form.get(f'artistName{i}')
+            image_url = request.form.get(f'imageURL{i}')
+            song_url = request.form.get(f'songURL{i}')
+
+            print(f"\nSong {i}:")
+            print(f"  ID: {song_id}")
+            print(f"  Name: {song_name}")
+            print(f"  Artist: {artist_name}")
+            print(f"  Image URL: {image_url}")
+            print(f"  Spotify URL: {song_url}")
+
+            if song_id:  
+                cur.execute("""
+                    INSERT INTO playlistSongs (playlistId, songId, songName, artistName, imageURL, songURL)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (playlistId, song_id, song_name, artist_name, image_url, song_url))
+    con.commit()
+
+    return redirect('/playlists')
+
+
+
+
+@app.route('/addSongToPlaylist', methods=['POST'])
+def addSongToPlaylist():
+    if session.get("userId") is None or session.get("username") is None:
+        return redirect('/')
+
+    playlistId = request.form.get('playlistId')
+    songId = request.form.get('songId')
+    songName = request.form.get('songName')
+    artistName = request.form.get('artistName')
+    imageURL = request.form.get('imageURL')
+    songURL = request.form.get('songURL')
+    trackQuery = request.form.get('trackQuery')
+
+    print(f"Adding song to playlist {playlistId}:")
+    print(f"  ID: {songId}")
+    print(f"  Name: {songName}")
+    print(f"  Artist: {artistName}")
+    print(f"  Image: {imageURL}")
+    print(f"  URL: {songURL}")
+
+    # Prevent duplicates
+    cur.execute("SELECT * FROM playlistSongs WHERE playlistId = ? AND songId = ?", (playlistId, songId))
+    exists = cur.fetchone()
+    
+    if not exists:
+        cur.execute("""
+            INSERT INTO playlistSongs (playlistId, songId, songName, artistName, imageURL, songURL)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (playlistId, songId, songName, artistName, imageURL, songURL))
         con.commit()
 
-    # redirects to playlists page
-    return redirect('/playlists')
+    return redirect(url_for('searchResults', track=trackQuery, added=songId, message="Added to Playlist"))
+
+

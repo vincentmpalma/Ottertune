@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ottertune</title>
     {{ bootstrap.load_css() }}
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='playlistPage.css') }}"
+    />
   </head>
   <body>
     <h1>Ottertune</h1>
@@ -23,10 +27,46 @@
     <br />
 
     <h2>My Playlists</h2>
+    <div class="container">
+      <div class="row">
+        {% for playlist in playlist_data %}
+        <div class="col-md-12 mb-5">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">{{ playlist.name }}</h5>
+              <p class="card-text">{{ playlist.desc }}</p>
 
-    {% for item in playlists %}{{ item[1] }} <br />
-
-    {% endfor %}
+              {% if playlist.songs %}
+              <ul class="list-group">
+                {% for song in playlist.songs %}
+                <li class="list-group-item d-flex align-items-center">
+                  <img
+                    src="{{ song[3] }}"
+                    alt="{{ song[1] }}"
+                    style="
+                      width: 50px;
+                      height: 50px;
+                      object-fit: cover;
+                      margin-right: 10px;
+                    "
+                  />
+                  <div>
+                    <strong>{{ song[1] }}</strong><br />
+                    <small>{{ song[2] }}</small><br />
+                    <a href="{{ song[4] }}" target="_blank">🎧 Listen</a>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <p class="text-muted">No songs in this playlist yet.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
 
     <div
       class="modal fade"
