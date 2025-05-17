@@ -1,3 +1,12 @@
+<!-- Multimedia Design and Programming
+-- Ottertune
+-- Abstract: Lets users create and manage personalized music playlists. 
+            The playlist page displays user playlists with song details and provides a modal form for adding new playlists.
+-- 
+-- Vincent Palma
+-- May 13th 2025
+-->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -14,6 +23,7 @@
     <h1>Ottertune</h1>
     {% include '/partials/nav.html' %}
     <h1>Playlists</h1>
+    <!-- Button to open modal for creating a new playlist -->
     <button
       type="button"
       class="btn btn-primary"
@@ -29,15 +39,18 @@
     <h2>My Playlists</h2>
     <div class="container">
       <div class="row">
+        <!-- Loop through all playlists -->
         {% for playlist in playlist_data %}
         <div class="col-md-12 mb-5">
           <div class="card shadow-sm">
             <div class="card-body">
+              <!-- Playlist title and description -->
               <h5 class="card-title">{{ playlist.name }}</h5>
               <p class="card-text">{{ playlist.desc }}</p>
-
+              <!-- Check if playlist has songs -->
               {% if playlist.songs %}
               <ul class="list-group">
+                <!-- Loop through songs in this playlist -->
                 {% for song in playlist.songs %}
                 <li class="list-group-item d-flex align-items-center">
                   <img
@@ -51,6 +64,7 @@
                     "
                   />
                   <div>
+                    <!-- Song title and artist -->
                     <strong>{{ song[1] }}</strong><br />
                     <small>{{ song[2] }}</small><br />
                     <a href="{{ song[4] }}" target="_blank">🎧 Listen</a>
@@ -68,6 +82,7 @@
       </div>
     </div>
 
+    <!-- Modal popup for creating a new playlist -->
     <div
       class="modal fade"
       id="createPlaylistModal"
@@ -85,6 +100,7 @@
               aria-label="Close"
             ></button>
           </div>
+          <!-- Form for submitting new playlist -->
           <form id="submitForm" method="POST" action="/createPlaylist">
             <div class="modal-body">
               <p>Enter your playlist name</p>
@@ -130,6 +146,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+      // Get modal element and create Bootstrap modal instance
       const myModalEl = document.getElementById("createPlaylistModal");
       const myModal = new bootstrap.Modal(myModalEl);
       const myInput = document.getElementById("myInput");

@@ -1,3 +1,11 @@
+<!-- Multimedia Design and Programming
+-- Ottertune
+-- Abstract: Main landing page where users can search for songs, 
+--            view their liked songs, playlists, and review recent search history.
+-- Vincent Palma
+-- May 13th 2025
+-->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,6 +24,7 @@
       <h1>Ottertune</h1>
     </div>
     <div id="nav">{% include '/partials/nav.html' %}</div>
+    <!-- Search form for song queries -->
     <form action="/searchResults" method="get">
       <label>
         Search for a song:
@@ -25,9 +34,12 @@
       <button>Search</button>
     </form>
 
+    <!-- Links to liked songs and playlists pages -->
     <a href="{{ url_for('checkLikes', userId=userID) }}">View My Liked Songs</a>
     <a href="{{ url_for('playlists') }}">View My Playlists</a>
 
+    <!-- Janniel Tan -->
+     <!-- Display user's recent search history if available -->
     <h3>Search History:</h3>
     {% if search_history %}
     <ul>

@@ -1,3 +1,11 @@
+<!-- Multimedia Design and Programming
+-- Ottertune
+-- Abstract: Displays a user's liked songs as cards showing album art, song name, and a link to listen on Spotify.
+-- Janniel Tan
+-- May 13th 2025
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,19 +22,25 @@
 
   <div class="container">
     <div class="row">
+      <!-- Check if user has liked songs -->
       {% if likedSongs %}
+      <!-- Loop through each liked song and display its details -->
         {% for songID, songURL, imageURL, songName in likedSongs %}
           <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
+              <!-- Album art image -->
               <img src="{{ imageURL }}" class="card-img-top" alt="Album art for {{ songName }}">
               <div class="card-body">
+                <!-- Song title -->
                 <h5 class="card-title">{{ songName }}</h5>
+                <!-- Link to listen on Spotify -->
                 <a href="{{ songURL }}" class="btn btn-success btn-sm mb-2" target="_blank">🎧 Listen</a>
               </div>
             </div>
           </div>
         {% endfor %}
       {% else %}
+      <!-- Show message if no liked songs -->
         <p class="track-title">You haven't liked any songs yet.</p>
       {% endif %}
     </div>

@@ -1,3 +1,12 @@
+<!-- Multimedia Design and Programming
+-- Ottertune
+-- Abstract: A page that has access to sign-in and sign-up forms,
+-- allowing users to access and create accounts for the website (Ottertune).
+-- 
+-- Vincent Palma
+-- May 13th 2025
+-->
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,12 +19,15 @@
 
   <div class="card">
     <h2>Sign In</h2>
+    <!-- Form for existing users to log in -->
     <form action="/signIn" method="POST">
       <div class="input-distance">
+        <!-- Username input field -->
         <input type="text" name="username" required placeholder="Username"  />
         
       </div>
       <div class="input-distance">
+        <!-- Password input field -->
         <input type="password" name="password" required placeholder="Password"  />
   
       </div>
@@ -25,12 +37,15 @@
 
   <div class="card">
     <h2>Sign Up</h2>
+    <!-- Form for new users to create an account -->
     <form action="/signUp" method="POST">
       <div class="input-distance">
+        <!-- Username input field -->
         <input type="text" name="username" required placeholder="Username" />
        
       </div>
       <div class="input-distance">
+        <!-- Password input field -->
         <input type="password" name="password" required placeholder="Password" />
       
       </div>

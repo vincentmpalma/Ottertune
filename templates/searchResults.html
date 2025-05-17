@@ -1,3 +1,13 @@
+<!-- Multimedia Design and Programming
+-- Ottertune
+-- Abstract: Displays music search results retrieved from the Spotify API. 
+          Users can view track details such as artist name and the link to the song.
+-- 
+-- Vincent Palma
+-- May 10th 2025
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,47 +23,45 @@
   <body>
     <h1>Ottertune</h1>
     {% include '/partials/nav.html' %}
+
+    <!-- showing search query -->
     <h2 class="track-title">Results: {{ track }}</h2>
 
-    <!-- Search History (optional) -->
-    <!--
-    <h3>Search History:</h3>
-    {% if search_history %}
-      <ul>
-        {% for entry in search_history %}
-          <li>{{ entry[0] }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-    -->
-
+  
     <div class="container">
       <div class="row">
+        <!-- loop through each track in the search results -->
         {% for track in results %}
         <div class="col-md-6 mb-4">
           <div class="card shadow-sm h-100">
+            <!-- Album cover image -->
             <img
+            
               src="{{ track.album.images[0].url }}"
               class="card-img-top"
               alt="Album art of {{ track.name }}"
             />
             <div class="card-body">
+              <!-- song name and artist -->
               <h5 class="card-title">{{ track.name }}</h5>
               <p class="card-text">by {{ track.artists[0].name }}</p>
+              <!-- Spotify link -->
               <a
                 href="{{ track.external_urls.spotify }}"
                 class="btn btn-success btn-sm mb-2"
                 target="_blank"
                 >🎧 Listen</a
               >
+              <!-- Song info page link -->
               <a
                 href="{{ url_for('song_info', track_id=track.id) }}"
                 class="btn btn-info btn-sm mb-2"
                 target="_blank"
                 >ℹ️ Info</a
               >
-
+              <!-- Like song form -->
               <form action="{{ url_for('likedSongs') }}" method="post">
+                <!-- Hidden inputs to send song data -->
                 <input type="hidden" name="songID" value="{{ track['id'] }}" />
                 <input
                   type="hidden"
@@ -94,10 +102,12 @@
                 {% if playlists|length > 0 %}
                 <div class="card-text">
                   Your Playlists:
+                  <!-- Form to add song to a selected playlist -->
                   <form
                     action="{{ url_for('addSongToPlaylist') }}"
                     method="POST"
                   >
+                  <!-- Dropdown menu of user's playlists -->
                     <select name="playlistId">
                       {% for playlist in playlists %}
                       <option value="{{ playlist[0] }}">
@@ -106,7 +116,7 @@
                       {% endfor %}
                     </select>
                     <button type="submit">Add</button>
-
+                    <!-- Hidden inputs with song details -->
                     <input
                       type="hidden"
                       name="songId"
