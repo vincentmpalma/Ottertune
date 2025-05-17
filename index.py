@@ -11,6 +11,24 @@ import random
 
 load_dotenv()
 
+# Abstract
+#
+# Course: CST 205 - Multimedia
+# Title: Ottertune
+#
+# Description: Website that let's you sign in/sign up 
+# Can search up songs from the spotify API and
+# add them to playlists you create.
+# You can also get information about songs, the artist, see
+# your search history, and be able to make a random playlist
+# generated off questions asked to you.
+#
+# Authors: Vincent Palma, Prabjot Pannu, Angel Valdez, Janniel Tan
+# Date: 05/16/25
+#
+# This file: This is the index page that has all the routes for the website.
+# It also has the database for setting up the tables.
+
 #SQLite database setup
 con = sqlite3.connect("ottertune.db", check_same_thread=False)
 cur = con.cursor()
