@@ -221,8 +221,12 @@ def searchResults():
     return render_template('searchResults.html', results=results, track_name=track)
 
 
+# Prabjot Pannu
+# Grabbed track_id from Spotify's API whenever a user clicks on Info button
 
 @app.route('/songInfo/<track_id>')
+# Using track_id we can display content using the documentation from Spotipy
+
 def song_info(track_id):
     track = sp.track(track_id)
     artist_id = track['artists'][0]['id']
@@ -235,6 +239,7 @@ def song_info(track_id):
    
     
 
+# Rendered page songInfo and values
     
     return render_template("songInfo.html", track=track, artist_albums = artistAlbums['items'], artist_image = imageArtists, tracks = topTracks['tracks'])
 
